@@ -48,23 +48,84 @@ function actionToggle() {
 
 ///////////////////////Видео
 document.addEventListener('DOMContentLoaded', function() {
-  var video = document.querySelector('.video');
+  var videos = document.querySelectorAll('.video');
 
-  // Отключаем звук
-  video.muted = true;
+  videos.forEach(function(video) {
+    // Отключаем звук
+    video.muted = true;
 
-  // Функция для перезапуска видео
-  function restartVideo() {
+    // Функция для перезапуска видео
+    function restartVideo() {
       video.currentTime = 0; // Устанавливаем время в начало видео
       video.play(); // Запускаем видео
-  }
+    }
 
-  // Слушаем событие 'ended', чтобы перезапустить видео при его завершении
-  video.addEventListener('ended', restartVideo);
+    // Слушаем событие 'ended', чтобы перезапустить видео при его завершении
+    video.addEventListener('ended', restartVideo);
 
-  // Запускаем воспроизведение видео
-  video.play();
+    // Запускаем воспроизведение видео
+    video.play();
+  });
 });
+
+// Загружаем YouTube API
+// Создаем элемент script и загружаем YouTube API
+var tag = document.createElement('script');
+tag.src = 'https://www.youtube.com/iframe_api'; // URL-адрес YouTube API
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+// Функция создания плеера
+var player;
+
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('video-player', {
+        height: '360',
+        width: '640',
+        videoId: '_1m5CXnO97U', // Передаем идентификатор воспроизведения
+        playerVars: {
+            'autoplay': 1,
+            'controls': 1,
+            'rel': 0,
+            'showinfo': 0,
+            'modestbranding': 1,
+            'loop': 1,
+            'mute': 1
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
+    });
+}
+
+// Функция, вызываемая при готовности плеера
+function onPlayerReady(event) {
+    event.target.playVideo(); // Запускаем видео при готовности плеера
+}
+
+// Функция, вызываемая при изменении состояния плеера
+function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.ENDED) {
+        player.seekTo(0); // Перемотка видео в начало при завершении
+        player.playVideo(); // Запуск видео заново
+    }
+}
+
+
+// Функция, вызываемая при готовности плеера
+function onPlayerReady(event) {
+    event.target.playVideo(); // Запускаем видео при готовности плеера
+}
+
+// Функция, вызываемая при изменении состояния плеера
+function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.ENDED) {
+        player.seekTo(0); // Перемотка видео в начало при завершении
+        player.playVideo(); // Запуск видео заново
+    }
+}
+
 
 ////////////////////////////// TABS
 const tabs = document.querySelector(".wrap");
